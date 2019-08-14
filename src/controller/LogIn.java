@@ -10,7 +10,7 @@ import javax.servlet.http.HttpSession;
 import domain.Person;
 import domain.PersonService;
 
-public class LogIn extends RequestHandler {
+public class LogIn extends SyncRequestHandler {
 
 	@Override
 	public String handleRequest(HttpServletRequest request,
@@ -33,6 +33,7 @@ public class LogIn extends RequestHandler {
 			Person person = personService.getAuthenticatedUser(email, password);
 			if (person != null) {
 				createSession(person, request, response);
+				destination = "chatPage.jsp";
 			} else {
 				errors.add("No valid email/password");
 			}

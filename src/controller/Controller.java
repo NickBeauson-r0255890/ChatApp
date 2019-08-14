@@ -6,22 +6,35 @@ import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.RemoteEndpoint;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import domain.ConversationService;
+import domain.Person;
 import domain.PersonService;
 
-@WebServlet("/Controller")
+//@WebServlet("/Controller")
+@WebServlet(urlPatterns={"/Controller"}, asyncSupported=true)
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-	private PersonService model = new PersonService();
+	public PersonService model = new PersonService();
+	private ConversationService conversationModel = new ConversationService();
 	private ControllerFactory controllerFactory = new ControllerFactory();
+	//private UserController usercontroller = new UserController(model);
 
 	public Controller() {
 		super();
+	}
+
+	public PersonService getPersonService(){
+		return this.model;
 	}
 
 	protected void doGet(HttpServletRequest request,
@@ -37,22 +50,49 @@ public class Controller extends HttpServlet {
 	protected void processRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        String destination = "index.jsp";
+        String result = "index.jsp";
+        RequestHandler handler = null;
         if (action != null) {
-        	RequestHandler handler;
-        	try {
-        		handler = controllerFactory.getController(action, model);
-				destination = handler.handleRequest(request, response);
-        	} 
-        	catch (NotAuthorizedException exc) {
-        		List<String> errors = new ArrayList<String>();
-        		errors.add(exc.getMessage());
-        		request.setAttribute("errors", errors);
-        		destination="index.jsp";
-        	}
-        }
-        RequestDispatcher view = request.getRequestDispatcher(destination);
-        view.forward(request, response);
-	}
 
+            try {
+                handler = controllerFactory.getController(action, model, conversationModel);
+                result = handler.handleRequest(request, response);
+            } catch (NotAuthorizedException exc) {
+                List<String> errors = new ArrayList<String>();
+                errors.add(exc.getMessage());
+                request.setAttribute("errors", errors);
+                result = "index.jsp";
+            }
+        } else {
+            response.setContentType("application/json;charset=UTF-8");
+            ServletOutputStream out = response.getOutputStream();
+            response.setHeader("Access-Control-Allow-Origin","*");
+            ArrayList<Person> users = this.model.getPersons();
+            String output = toJSON(users);
+            out.print(output);
+            //request.getRequestDispatcher(result).forward(request, response);
+        }
+
+        if (handler instanceof SyncRequestHandler) {
+            RequestDispatcher view = request.getRequestDispatcher(result);
+            view.forward(request, response); //Toont heel nieuwe pagina
+        } else if(handler instanceof AsyncRequestHandler){
+            if (result != null) {
+                response.setContentType("application/json"); //laat weten dat string json object is
+                response.setHeader("Access-Control-Allow-Origin", "*");
+                response.getWriter().write(result); //response sturen
+            }
+        }
+		/*
+    2 soorten requesthandlers: synch & asynch
+    -> 2 subklasses van requesthandler
+    -> sync geeft jsp terug
+    -> asynch geeft status terug
+ */
+    }
+    public String toJSON (ArrayList< Person > users) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        return mapper.writeValueAsString(users);
+    }
 }

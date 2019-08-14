@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import db.PersonRepository;
@@ -11,11 +12,11 @@ public class PersonService {
 	public PersonService(){
 	}
 	
-	public Person getPerson(String personId)  {
-		return getPersonRepository().get(personId);
+	public Person getPerson(String email)  {
+		return getPersonRepository().get(email);
 	}
 
-	public List<Person> getPersons() {
+	public ArrayList<Person> getPersons() {
 		return getPersonRepository().getAll();
 	}
 
