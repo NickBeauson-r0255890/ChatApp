@@ -15,16 +15,16 @@ public class GetMessages extends AsyncRequestHandler {
     @Override
     public String handleRequest(HttpServletRequest request, HttpServletResponse response)throws IOException {
 
-        System.out.println("GetMessages");
+        //System.out.println("GetMessages");
 
         ConversationService conversationModel = getConversationService();
         PersonService personService = getPersonService();
 
         /*  Friend */
         String friendEmail = request.getParameter("userEmail");
-        System.out.println("GetMessages friendEmail: " + friendEmail);
+        //System.out.println("GetMessages friendEmail: " + friendEmail);
         Person friend = personService.getPerson(friendEmail);
-        System.out.println(friend.getFirstName());
+        //System.out.println(friend.getFirstName());
 
 
         /* Logged in user */

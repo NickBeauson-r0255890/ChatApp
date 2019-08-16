@@ -63,7 +63,7 @@ public class Controller extends HttpServlet {
         //3 zorgen asynchroon aangepast
 
 
-	    System.out.println("DoPut: ");
+	    //System.out.println("DoPut: ");
 	    BufferedReader br = new BufferedReader( new InputStreamReader(request.getInputStream()));
 	    String data = br.readLine();
 

@@ -380,7 +380,6 @@ function getMessage(userName, userEmail) {
 }
 
 function sendMessage(userName, userEmail) {
-    alert("SendMessage " + userName + " " + userEmail);
         var message = $("#chatInput" + userName).val(); //ophalen data uit inputfield
     /* $.ajax({
          type: "post",
@@ -397,7 +396,6 @@ function sendMessage(userName, userEmail) {
 }
 
 function closeChat(userName, userEmail) {
-    alert("CloseChat: " + userName  + " " + userEmail);
     console.log("Closing chat with " + userEmail);
     $("#outerDiv" + userName).remove();
 }
