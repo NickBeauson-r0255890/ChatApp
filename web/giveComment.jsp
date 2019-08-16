@@ -19,7 +19,7 @@
         </p>
         <p>
             <label for="name">Name:</label>
-            <input type="text" id="name" name="user" value="${user.getFirstName()}">
+            <input type="text" id="name" name="user" value="${userEmail}">
         </p>
         <p>
             <input type="button" value="Comment" onclick="send()">

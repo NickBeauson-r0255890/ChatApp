@@ -9,7 +9,7 @@
                 <c:when test="${topic != null}">
                     <li><a id="back" href="Controller?action=GoBack">Back</a></li>
                 </c:when>
-                <c:when test="${user.firstName==null}">
+                <c:when test="${userEmail==null}">
                     <li id="actual"><a href="Controller?action=GetHome">Home</a></li>
                     <li><a href="Controller?action=UserForm">Register</a></li>
                 </c:when>

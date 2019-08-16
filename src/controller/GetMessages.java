@@ -16,15 +16,16 @@ public class GetMessages extends AsyncRequestHandler {
     public String handleRequest(HttpServletRequest request, HttpServletResponse response)throws IOException {
 
         ConversationService conversationModel = getConversationService();
-        PersonService model = getPersonService();
+        PersonService personService = getPersonService();
 
-        //friend
+        /*  Friend */
         String friendName = request.getParameter("userName");
-        Person friend = model.getPerson(friendName.toLowerCase() + "@ucll.be");
+        Person friend = personService.getPerson(friendName.toLowerCase() + "@ucll.be");
 
-        //user
+        /* Logged in user */
         HttpSession session = request.getSession();
-        Person user = (Person) session.getAttribute("user");
+        String loggedInUserEmail = session.getAttribute("userEmail") + "";
+        Person user = personService.getPerson(loggedInUserEmail);
 
         Conversation conversation = null;
         boolean test = conversationModel.checkConversationAlreadyExists(user,friend);

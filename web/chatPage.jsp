@@ -7,13 +7,14 @@
 <jsp:include page="head.jsp">
     <jsp:param name="title" value="Chat"/>
 </jsp:include>
-<body onload="getStatus();getFriends()">
+<body onload="getStatus();getFriends();getName()">
 <jsp:include page="header.jsp">
     <jsp:param name="title" value="Chat page"/>
 </jsp:include>
 <main>
 
-    <p>Welcome ${user.getFirstName()}!</p>
+    <!--<p>Welcome ${user.getFirstName()}!</p>-->
+    <div id="name"></div>
     <p>Current status:</p>
     <div id="status"></div>
 

@@ -49,7 +49,8 @@ public class LogIn extends SyncRequestHandler {
 	private void createSession(Person person, HttpServletRequest request,
 			HttpServletResponse response) {
 		HttpSession session = request.getSession();
-		session.setAttribute("user", person);
+		//session.setAttribute("user", person);
+		session.setAttribute("userEmail", person.getEmail());
 	}
 
 }

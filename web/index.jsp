@@ -7,7 +7,7 @@
 <jsp:include page="head.jsp">
     <jsp:param name="title" value="Home"/>
 </jsp:include>
-<body onload="getOnOffCount()"> <!--werkt niet in input/img tag!-->
+<body onload="getOnOffCount(); getName()"> <!--werkt niet in input/img tag!-->
 <jsp:include page="header.jsp">
     <jsp:param name="title" value="Home"/>
 </jsp:include>
@@ -21,15 +21,15 @@
             </ul>
         </div>
     </c:if> <c:choose>
-    <c:when test="${user!=null}">
-            <p>Welcome ${user.getFirstName()}!</p>
-            <form method="post" action="Controller?action=LogOut">
-                <p id="onOffCount"></p>
-                <p>
-                    <input type="submit" id="logoutbutton" value="Log Out">
-                </p>
+    <c:when test="${userEmail!=null}">
+        <div id="name"></div>
+        <form method="post" action="Controller?action=LogOut">
+            <p id="onOffCount"></p>
+            <p>
+                <input type="submit" id="logoutbutton" value="Log Out">
+            </p>
 
-            </form>
+        </form>
         </div>
 
     </c:when>
@@ -52,9 +52,11 @@
 
     <h3>Blog - Topics</h3>
     <ul>
+        <li><a href="Controller?action=GiveComment&topic=8">Is CORS je vriend?</a></li>
         <li><a href="Controller?action=GiveComment&topic=1">Was het een interessante projectweek?</a></li>
         <li><a href="Controller?action=GiveComment&topic=2">Wat ben je van plan om te doen vandaag?</a></li>
-        <li><a href="Controller?action=GiveComment&topic=3">Naar welke muziek ben je momenteel aan het luisteren?</a></li>
+        <li><a href="Controller?action=GiveComment&topic=3">Naar welke muziek ben je momenteel aan het luisteren?</a>
+        </li>
         <li><a href="Controller?action=GiveComment&topic=4">Wat zijn mogelijke examenvragen voor het vak Web4?</a></li>
         <li><a href="Controller?action=GiveComment&topic=5">Komt er ooit Web5?</a></li>
         <li><a href="Controller?action=GiveComment&topic=6">Wat is je favoriete muziek?</a></li>

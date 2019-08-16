@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.Message;
 import domain.Person;
+import domain.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,8 +18,12 @@ public class GetOnOffCount extends AsyncRequestHandler{
 
         String status = request.getParameter("");
 
+        PersonService personService = getPersonService();
+
         HttpSession session = request.getSession();
-        Person person = (Person) session.getAttribute("user");
+        String loggedInUserEmail = session.getAttribute("userEmail") + "";
+        Person person = personService.getPerson(loggedInUserEmail);
+
         int offline = 0;
         int online = 0;
         if(person != null) {

@@ -27,6 +27,8 @@ public class GiveComment extends SyncRequestHandler {
                     break;
             case 7: topic = "Waar ben je van plan om stage te doen?";
                     break;
+            case 8: topic = "Is CORS je vriend?";
+                    break;
             default: topic = "Error";
         }
         System.out.println(topic);

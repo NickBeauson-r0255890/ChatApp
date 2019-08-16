@@ -12,17 +12,18 @@ public class SendMessage extends AsyncRequestHandler {
     public String handleRequest(HttpServletRequest request, HttpServletResponse response){
 
         ConversationService conversationModel = getConversationService();
-        PersonService model = getPersonService();
+        PersonService personService = getPersonService();
 
         //friend
         String friendName = request.getParameter("userName");
-        Person friend = model.getPerson(friendName.toLowerCase() + "@ucll.be");
+        Person friend = personService.getPerson(friendName.toLowerCase() + "@ucll.be");
         //idealiter zou de id (mail) van de friend worden doorgestuurd aangezien dezelfde
         //naam meerdere keren kan voorkomen
 
         //user
         HttpSession session = request.getSession();
-        Person user = (Person) session.getAttribute("user");
+        String loggedInUserEmail = session.getAttribute("userEmail") + "";
+        Person user = personService.getPerson(loggedInUserEmail);
 
         //Message
         String messageString = request.getParameter("message");

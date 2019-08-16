@@ -1,5 +1,4 @@
 var statusXhr = new XMLHttpRequest();
-
 function getStatus() {
     statusXhr.open("GET", "Controller?action=GetStatus");
     //Get request
@@ -8,18 +7,71 @@ function getStatus() {
     //--> onreadystatechange: this gets executed every time the state changes
     statusXhr.send(); //Send gebruikt om parameter mee tegeven (key/value pair bv) -> in controller ophalen met request.getParam(key)
 }
-
 function getData() {
     //if httpstatus = 200
+    var div = document.getElementById("status")
+    var status = div.childNodes[0];
+    var p;
     if (statusXhr.status == 200) {
         //xhr : verschillende states:
         //0=aangemaakt, 1 = connectie , 2 = na send, 3 = , 4= response binnen gekregen
         if (statusXhr.readyState == 4) {
-            var div = document.getElementById("status");
-            var p = document.createElement('p');
-            var text = document.createTextNode(statusXhr.responseText);
-            p.appendChild(text);
-            div.appendChild(p);
+
+            if (status == null) {
+                p = document.createElement('p');
+                status = document.createTextNode(statusXhr.responseText);
+                p.appendChild(status);
+                div.appendChild(p);
+            } else {
+                while (div.firstChild) {
+                    div.removeChild(div.firstChild);
+                }
+                p = document.createElement('p');
+                status = document.createTextNode(statusXhr.responseText);
+                p.appendChild(status);
+                div.appendChild(p);
+            }
+            setTimeout("getStatus()", 2000);
+/*
+            p = document.createElement('p');
+            status = document.createTextNode(statusXhr.responseText);
+            p.appendChild(status);
+            div.appendChild(p);*/
+
+        }
+    }
+}
+
+var nameXhr = new XMLHttpRequest();
+function getName(){
+
+    nameXhr.open("GET", "Controller?action=GetName");
+    nameXhr.onreadystatechange = getNameData;
+    nameXhr.send();
+}
+
+function getNameData(){
+    var div = document.getElementById("name");
+    var p;
+    var nameText = div.childNodes[0];
+
+    if (nameXhr.status == 200) {
+        if (nameXhr.readyState == 4) {
+            if (nameText == null) {
+                p = document.createElement('p');
+                nameText = document.createTextNode("Welcome " + nameXhr.responseText + "!");
+                p.appendChild(nameText);
+                div.appendChild(p);
+            } else {
+                while (div.firstChild) {
+                    div.removeChild(div.firstChild);
+                }
+                p = document.createElement('p');
+                nameText = document.createTextNode("Welcome " + nameXhr.responseText + "!");
+                p.appendChild(nameText);
+                div.appendChild(p);
+            }
+            setTimeout("getName()", 2000);
         }
     }
 }
@@ -60,18 +112,19 @@ function getDataChangedStatus() {
     }
 }
 
+
+
 var getFriendsXhr = new XMLHttpRequest();
 
 function getFriends() {
     getFriendsXhr.open("GET", "Controller?action=GetFriends");
-    getFriendsXhr.onreadystatechange = getFriendsData; //Indien OK
+    getFriendsXhr.onreadystatechange = getFriendsData;
     getFriendsXhr.send();
 }
 
 function getFriendsData() {
     if (getFriendsXhr.status == 200) {
         if (getFriendsXhr.readyState == 4) {
-
             var serverResponse = JSON.parse(getFriendsXhr.responseText); //Get JSON text out of response server
             /*
             var myJSON = '{"name":"John", "age":31, "city":"New York"}';
@@ -200,17 +253,17 @@ function getFriendsData() {
             }
 
             //Online: x offline: y  weergeven
-            if(onlineText == null){
+            if (onlineText == null) {
                 //Nagaan hoeveel vrienden offline / online
                 for (i = 0; i < JSONLength; i++) {
-                    if(serverResponse[i].status == "offline"){
+                    if (serverResponse[i].status == "offline") {
                         offline++;
-                    }else {
+                    } else {
                         online++;
                     }
                 }
                 onlineText = document.createTextNode("Online: " + online + " ");
-                offlineText = document.createTextNode("Offline: " +offline);
+                offlineText = document.createTextNode("Offline: " + offline);
                 h3.appendChild(onlineText);
                 h3.appendChild(offlineText);
             }
@@ -220,14 +273,14 @@ function getFriendsData() {
                 }
                 //Nagaan hoeveel vrienden offline / online
                 for (i = 0; i < JSONLength; i++) {
-                    if(serverResponse[i].status == "offline"){
+                    if (serverResponse[i].status == "offline") {
                         offline++;
-                    }else {
+                    } else {
                         online++;
                     }
                 }
                 onlineText = document.createTextNode("Online: " + online + " ");
-                offlineText = document.createTextNode("Offline: " +offline);
+                offlineText = document.createTextNode("Offline: " + offline);
                 h3.appendChild(onlineText);
                 h3.appendChild(offlineText);
             }
@@ -237,15 +290,15 @@ function getFriendsData() {
 }
 
 //////FANCY - toggle friendslist////
-$(function(){
-    $("#friendsListButton").on('click',function(){
-        $("#friendsList").fadeToggle(2000,function(){   //Callback functie (gebeurt na de fade)
+$(function () {
+    $("#friendsListButton").on('click', function () {
+        $("#friendsList").fadeToggle(2000, function () {   //Callback functie (gebeurt na de fade)
             var buttonText = $("#friendsListButton").text();
             var newButtonText = "Hide Friendslist";
-            if(buttonText === "Hide Friendslist"){
+            if (buttonText === "Hide Friendslist") {
                 newButtonText = "Show Friendslist"
                 $("#friendsListButton").html(newButtonText);
-            }else{
+            } else {
                 $("#friendsListButton").html(newButtonText);
             }
             /*
@@ -286,8 +339,8 @@ function enableChat(userName) {
             "id": "removeChat" + userName,
             "onclick": "closeChat(\"" + userName + "\")"
         }).text("Close chat");
-        var messagesDiv = $("<div />").attr({"id":"messagesDiv" + userName,"class":"messagesDiv"});
-        var chatDiv = $("<div />").attr("id", "chatDiv" + userName).append(messagesDiv,input,sendButton, closeButton);
+        var messagesDiv = $("<div />").attr({"id": "messagesDiv" + userName, "class": "messagesDiv"});
+        var chatDiv = $("<div />").attr("id", "chatDiv" + userName).append(messagesDiv, input, sendButton, closeButton);
         var br = $("<br />");
         var outerDiv = $("<div />").attr("id", "outerDiv" + userName).append(title, chatDiv, br);
         $("#chat").append(outerDiv);
@@ -307,6 +360,7 @@ function getMessage(userName) {
             if (json.length == 0) {
                 console.log("messages empty, trying again in 2 seconds");
             } else {
+                //alert("messages not null");
                 $(json).each(function (index, message) {
                     $('#messagesDiv' + userName).append($("<p />").text(message.person.firstName + ": " + message.message));
 
@@ -408,9 +462,9 @@ function closeSocket() {
 function openSocket() {
     webSocket = new WebSocket("ws://localhost:8080/comment");
 
-     /*webSocket.onopen = function(event){
-         writeResponse("Connection opened");
-     };*/
+    /*webSocket.onopen = function(event){
+        writeResponse("Connection opened");
+    };*/
 
     webSocket.onmessage = function (event) {
         writeResponse(event.data);
@@ -459,22 +513,22 @@ function writeResponse(data) {
 }
 
 /////Give online & offline count on index.jsp//////
-function getOnOffCount(){
+function getOnOffCount() {
     $.ajax({
         type: "GET",
         url: "Controller?action=GetOnOffCount",
         data: "",
         dataType: "json",
-        success: function(json){
-            if(json.length != 0){
-                $("#onOffCount").text("Online: " + json[0] + " Offline: " + json[1] )
+        success: function (json) {
+            if (json.length != 0) {
+                $("#onOffCount").text("Online: " + json[0] + " Offline: " + json[1])
             }
         },
-        error: function(){
+        error: function () {
             //alert("fail");
         }
     });
-    setTimeout(getOnOffCount,2000);
+    setTimeout(getOnOffCount, 2000);
 }
 
 

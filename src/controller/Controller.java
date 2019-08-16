@@ -1,8 +1,13 @@
 package controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,13 +16,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.websocket.RemoteEndpoint;
+import javax.xml.crypto.Data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.ConversationService;
 import domain.Person;
 import domain.PersonService;
+import domain.Role;
 
 //@WebServlet("/Controller")
 @WebServlet(urlPatterns={"/Controller"}, asyncSupported=true)
@@ -47,6 +55,49 @@ public class Controller extends HttpServlet {
 		processRequest(request, response);
 	}
 
+	protected void doPut(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
+
+	    //1 ophalen data
+        //2 omzetten data naar object
+        //3 zorgen asynchroon aangepast
+
+
+	    System.out.println("DoPut: ");
+	    BufferedReader br = new BufferedReader( new InputStreamReader(request.getInputStream()));
+	    String data = br.readLine();
+
+	    System.out.println("data: " + data);
+
+	    ObjectMapper mapper = new ObjectMapper();
+	    Map<String, Object> map = mapper.readValue(data, Map.class);
+
+	    try{
+	        Person person = mapper.readValue(data, Person.class);
+
+	        /* retrieve password, salt & friendslist: */
+            String email = person.getEmail();
+            Person oldPerson =  this.model.getPerson(email);
+            person.setPassword(oldPerson.getPassword());
+            person.setSalt(oldPerson.getSalt());
+            person.setFriends(oldPerson.getFriends());
+
+            this.model.updatePersons(person);
+
+        }catch( IOException e){
+
+        }
+
+
+        HttpSession session = request.getSession();
+	    Person person = (Person) session.getAttribute("user");
+        if(person == null){
+            System.out.println("Session is null");
+        }else {
+            System.out.println("PutSession: " + person.getFirstName());
+        }
+	}
+
 	protected void processRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -63,7 +114,7 @@ public class Controller extends HttpServlet {
                 request.setAttribute("errors", errors);
                 result = "index.jsp";
             }
-        } else {
+        } else {  /* localhost:8080/Controller ->  returns all users als json */
             response.setContentType("application/json;charset=UTF-8");
             ServletOutputStream out = response.getOutputStream();
             response.setHeader("Access-Control-Allow-Origin","*");
@@ -87,12 +138,19 @@ public class Controller extends HttpServlet {
     2 soorten requesthandlers: synch & asynch
     -> 2 subklasses van requesthandler
     -> sync geeft jsp terug
-    -> asynch geeft status terug
- */
+    -> asynch geeft json terug aan .js
+    */
     }
-    public String toJSON (ArrayList< Person > users) throws JsonProcessingException {
+
+    private String toJSON (ArrayList< Person > users) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
 
         return mapper.writeValueAsString(users);
     }
+
+    private static String inputStreamToString(InputStream inputStream){
+	    Scanner scanner = new Scanner(inputStream, "UTF-8");
+	    return scanner.hasNext() ? scanner.useDelimiter("\\A").next() : "";
+    }
+
 }

@@ -68,6 +68,13 @@ public class Person {
 	    return this.friends;
     }
 
+    public void setFriends(ArrayList<Person> friends){
+		if(friends == null){
+			throw new IllegalArgumentException("No friends given");
+		}
+		this.friends=friends;
+	}
+
 	public void setStatus(String status){
 	    if(status == null ||status.trim().isEmpty()){
 	        throw new IllegalArgumentException("No valid status");

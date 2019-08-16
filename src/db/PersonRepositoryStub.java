@@ -8,6 +8,8 @@ import java.util.Map;
 import domain.Person;
 import domain.Role;
 
+import javax.servlet.http.HttpSession;
+
 public class PersonRepositoryStub implements PersonRepository {
 	private Map<String, Person> persons = new HashMap<String, Person>();
 	
@@ -51,7 +53,6 @@ public class PersonRepositoryStub implements PersonRepository {
 	}
 	
 	public ArrayList<Person> getAll(){
-		System.out.println("Inside stub getAll function");
 		return new ArrayList<Person>(persons.values());
 
 	}
@@ -63,14 +64,44 @@ public class PersonRepositoryStub implements PersonRepository {
 		if (persons.containsKey(person.getEmail())) {
 			throw new IllegalArgumentException("User already exists");
 		}
-		persons.put(person.getEmail(), person);
+		this.persons.put(person.getEmail(), person);
 	}
 	
 	public void update(Person person){
+
 		if(person == null){
 			throw new IllegalArgumentException("No person given");
 		}
+
+		this.persons.put(person.getEmail(),person);
+		for(Person user: this.persons.values()){
+		    ArrayList<Person> friendList = user.getFriends();
+            for(Person friend: friendList){
+                System.out.println("OldFriend: " + friend.getFirstName() + " " + friend.getStatus());
+                if(friend.getEmail().equals(person.getEmail())){
+                    friend.setStatus(person.getStatus());
+                    friend.setFirstName(person.getFirstName());
+                    friend.setLastName(person.getLastName());
+                    friend.setAge(person.getAge());
+                    friend.setSex(person.getSex());
+                }
+                System.out.println("NewFriend: " + friend.getFirstName() + " " + friend.getStatus());
+            }
+
+        }
+
+
+/*
+		System.out.println("update person: " + person.getEmail());
+		Person person1 = this.get(person.getEmail());
+		System.out.println("Person voor update: " + person1.getFirstName() + " " + person1.getStatus() + " " + person1.getPassword());
 		persons.put(person.getEmail(), person);
+		Person person2 = this.get(person.getEmail());
+		System.out.println("Person na update: " + person2.getFirstName() + " " + person2.getStatus() + " " + person2.getPassword());
+
+		for(Person friend: person1.getFriends()){
+
+        }*/
 	}
 	
 	public void delete(String personId){

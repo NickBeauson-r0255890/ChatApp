@@ -3,6 +3,7 @@ package controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.Person;
+import domain.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,10 +14,17 @@ import java.util.ArrayList;
 public class GetFriends extends AsyncRequestHandler{
     @Override
     public String handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession();
-        Person person = (Person) session.getAttribute("user");
 
-        ArrayList<Person>  friends = person.getFriends();
+        /*  Get user out of session */
+        HttpSession session = request.getSession();
+       // Person person = (Person) session.getAttribute("user");
+        String loggedInUserEmail = session.getAttribute("userEmail") + "";
+
+        PersonService personService = getPersonService();
+        Person user = personService.getPerson(loggedInUserEmail);
+
+        ArrayList<Person>  friends = user.getFriends();
+
         return toJSON(friends);
 
 
