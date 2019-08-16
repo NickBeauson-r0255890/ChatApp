@@ -67,8 +67,6 @@ public class Controller extends HttpServlet {
 	    BufferedReader br = new BufferedReader( new InputStreamReader(request.getInputStream()));
 	    String data = br.readLine();
 
-	    System.out.println("data: " + data);
-
 	    ObjectMapper mapper = new ObjectMapper();
 	    Map<String, Object> map = mapper.readValue(data, Map.class);
 
@@ -86,15 +84,6 @@ public class Controller extends HttpServlet {
 
         }catch( IOException e){
 
-        }
-
-
-        HttpSession session = request.getSession();
-	    Person person = (Person) session.getAttribute("user");
-        if(person == null){
-            System.out.println("Session is null");
-        }else {
-            System.out.println("PutSession: " + person.getFirstName());
         }
 	}
 

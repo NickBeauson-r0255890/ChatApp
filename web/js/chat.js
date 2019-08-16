@@ -195,6 +195,7 @@ function getFriendsData() {
             if (tableData == null) {
                 for (i = 0; i < JSONLength; i++) {
                     var userName = serverResponse[i].firstName;
+                    var userMail = serverResponse[i].email;
                     tableName = document.createTextNode(userName);
                     tableStatus = document.createTextNode(serverResponse[i].status);
                     chatButtonText = document.createTextNode("Chat with " + userName);
@@ -202,7 +203,7 @@ function getFriendsData() {
                     chatButton = document.createElement("button");
                     chatButton.setAttribute("type", "button");
                     chatButton.setAttribute("id", userName);
-                    chatButton.setAttribute("onclick", "enableChat(\"" + userName + "\")");
+                    chatButton.setAttribute("onclick", "enableChat(\"" + userName + "\""+ "," + "\"" + userMail + "\")");
                     chatButton.appendChild(chatButtonText);
 
                     tableData = document.createElement("td");
@@ -226,6 +227,7 @@ function getFriendsData() {
                 } //Remove verwijdert bovenste, append voegt onderaan toe -> met while helemaal leegmake
                 for (i = 0; i < JSONLength; i++) {
                     var userName = serverResponse[i].firstName;
+                    var userMail = serverResponse[i].email;
                     tableName = document.createTextNode(userName);
                     tableStatus = document.createTextNode(serverResponse[i].status);
                     chatButtonText = document.createTextNode("Chat with " + userName);
@@ -233,7 +235,7 @@ function getFriendsData() {
                     chatButton = document.createElement("button");
                     chatButton.setAttribute("type", "button");
                     chatButton.setAttribute("id", userName);
-                    chatButton.setAttribute("onclick", "enableChat(\"" + userName + "\")");
+                    chatButton.setAttribute("onclick", "enableChat(\"" + userName + "\""+ "," + "\"" +userMail + "\")");
                     chatButton.appendChild(chatButtonText);
 
                     tableData = document.createElement("td");
@@ -325,40 +327,40 @@ document.getElementById("chatButton").addEventListener("click", enableChat);
   -> id nodig om object op te roepen -> id is uniek per button? Hoe dan oproepen?
 */
 
-function enableChat(userName) {
+function enableChat(userName, userEmail) {
     $(function () {
         var title = $("<h2/>").html("Chat met <b>" + userName + "</b>:");
         var input = $("<input />").attr({"type": "text", "id": "chatInput" + userName});
         var sendButton = $("<button />").attr({
             "type": "button",
-            "id": "sendChatMessage" + userName,
-            "onclick": "sendMessage(\"" + userName + "\")"
+            "id": "sendChatMessage" + userEmail,
+            "onclick": "sendMessage(\"" + userName + "\""+ "," + "\"" +userEmail + "\")"
         }).text("Send");
         var closeButton = $("<button />").attr({
             "type": "button",
             "id": "removeChat" + userName,
-            "onclick": "closeChat(\"" + userName + "\")"
+            "onclick": "closeChat(\"" + userName + "\""+ "," + "\"" +userEmail + "\")"
         }).text("Close chat");
         var messagesDiv = $("<div />").attr({"id": "messagesDiv" + userName, "class": "messagesDiv"});
-        var chatDiv = $("<div />").attr("id", "chatDiv" + userName).append(messagesDiv, input, sendButton, closeButton);
+        var chatDiv = $("<div />").attr("id", "chatDiv" + userEmail).append(messagesDiv, input, sendButton, closeButton);
         var br = $("<br />");
         var outerDiv = $("<div />").attr("id", "outerDiv" + userName).append(title, chatDiv, br);
         $("#chat").append(outerDiv);
-        getMessage(userName);
+        getMessage(userName, userEmail);
     });
 }
 
-function getMessage(userName) {
+function getMessage(userName, userEmail) {
     $.ajax({
         type: "GET",
         url: "Controller?action=GetMessages",
-        data: "userName=" + userName,
+        data: "userEmail=" + userEmail,
         dataType: "json",
         success: function (json) {
             var div = $('#messagesDiv' + userName);
             div.html("");
             if (json.length == 0) {
-                console.log("messages empty, trying again in 2 seconds");
+                console.log("messages empty, trying again in 5 seconds");
             } else {
                 //alert("messages not null");
                 $(json).each(function (index, message) {
@@ -367,7 +369,7 @@ function getMessage(userName) {
                 })
             }
             div.scrollTop = div.scrollHeight;
-            setTimeout(getMessage(userName), 5000);
+            setTimeout(getMessage(userName,userEmail), 2000);
         }
         ,
         error: function () {
@@ -377,8 +379,9 @@ function getMessage(userName) {
 
 }
 
-function sendMessage(userName) {
-    var message = $("#chatInput" + userName).val();
+function sendMessage(userName, userEmail) {
+    alert("SendMessage " + userName + " " + userEmail);
+        var message = $("#chatInput" + userName).val(); //ophalen data uit inputfield
     /* $.ajax({
          type: "post",
          url: "Controller?action=SendMessage",
@@ -389,14 +392,13 @@ function sendMessage(userName) {
              message: message
          }
      });*/
-
-    $.post("Controller?action=SendMessage", {userName: userName, message: message}, null, "json");
-    $("#chatInput" + userName).val("");
+    $.post("Controller?action=SendMessage", {userEmail: userEmail, message: message}, null, "json");
+    $("#chatInput" + userName).val(""); //leegmaken inputfield
 }
 
-function closeChat(userName) {
-    var removing = "#outerDiv" + userName;
-    console.log("Closing chat with " + userName);
+function closeChat(userName, userEmail) {
+    alert("CloseChat: " + userName  + " " + userEmail);
+    console.log("Closing chat with " + userEmail);
     $("#outerDiv" + userName).remove();
 }
 

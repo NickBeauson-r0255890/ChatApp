@@ -77,7 +77,6 @@ public class PersonRepositoryStub implements PersonRepository {
 		for(Person user: this.persons.values()){
 		    ArrayList<Person> friendList = user.getFriends();
             for(Person friend: friendList){
-                System.out.println("OldFriend: " + friend.getFirstName() + " " + friend.getStatus());
                 if(friend.getEmail().equals(person.getEmail())){
                     friend.setStatus(person.getStatus());
                     friend.setFirstName(person.getFirstName());
@@ -85,7 +84,6 @@ public class PersonRepositoryStub implements PersonRepository {
                     friend.setAge(person.getAge());
                     friend.setSex(person.getSex());
                 }
-                System.out.println("NewFriend: " + friend.getFirstName() + " " + friend.getStatus());
             }
 
         }

@@ -15,12 +15,17 @@ public class GetMessages extends AsyncRequestHandler {
     @Override
     public String handleRequest(HttpServletRequest request, HttpServletResponse response)throws IOException {
 
+        System.out.println("GetMessages");
+
         ConversationService conversationModel = getConversationService();
         PersonService personService = getPersonService();
 
         /*  Friend */
-        String friendName = request.getParameter("userName");
-        Person friend = personService.getPerson(friendName.toLowerCase() + "@ucll.be");
+        String friendEmail = request.getParameter("userEmail");
+        System.out.println("GetMessages friendEmail: " + friendEmail);
+        Person friend = personService.getPerson(friendEmail);
+        System.out.println(friend.getFirstName());
+
 
         /* Logged in user */
         HttpSession session = request.getSession();
@@ -37,7 +42,7 @@ public class GetMessages extends AsyncRequestHandler {
 
         ArrayList<Message> messages = conversation.getMessages();
         if(messages == null){
-            //System.out.println("No messages");
+            System.out.println("No messages");
             return null;
         }else {
             //System.out.println(toJSON(messages));

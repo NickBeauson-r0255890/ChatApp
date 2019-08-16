@@ -15,10 +15,13 @@ public class SendMessage extends AsyncRequestHandler {
         PersonService personService = getPersonService();
 
         //friend
-        String friendName = request.getParameter("userName");
-        Person friend = personService.getPerson(friendName.toLowerCase() + "@ucll.be");
+        String userEmail = request.getParameter("userEmail");
+        Person friend = personService.getPerson(userEmail);
         //idealiter zou de id (mail) van de friend worden doorgestuurd aangezien dezelfde
         //naam meerdere keren kan voorkomen
+
+        //System.out.print("FriendMail: " + userEmail);
+        //System.out.print("Friend: " + friend.getFirstName());
 
         //user
         HttpSession session = request.getSession();
